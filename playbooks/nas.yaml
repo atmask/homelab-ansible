@@ -1,0 +1,35 @@
+- name: Configure Samba
+  hosts: bondsmith
+  tasks:
+    - name: Installing Samba
+      ansible.builtin.apt:
+        pkg:
+          - samba
+          - samba-common-bin
+    - name: Creating /nas/ dir for share
+      file:
+        path: "/nas"
+        state: directory
+    - name: Creating Samba config file
+      copy:
+        dest: "/etc/samba/smb.conf"
+        content: |
+          [nas]
+          path=/nas
+          writeable=Yes
+          create mask=0777
+          directory mask=0777
+          public=no
+      become: yes
+    - name: Restart smb service
+      ansible.builtin.systemd_service:
+        name: smbd
+        state: restarted
+        daemon_reload: true
+      become: yes
+    # - name: Add a k3s-nas-user
+    #   ansible.builtin.user:
+    #     name: k3s-nas-user
+    #     password: 
+
+    # Create user and add to smbpasswd
