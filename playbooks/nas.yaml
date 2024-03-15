@@ -1,5 +1,7 @@
 - name: Configure Samba
   hosts: bondsmith
+  vars:
+    nas_user: k3s-nas-user
   tasks:
     - name: Installing Samba
       ansible.builtin.apt:
@@ -27,9 +29,11 @@
         state: restarted
         daemon_reload: true
       become: yes
-    # - name: Add a k3s-nas-user
-    #   ansible.builtin.user:
-    #     name: k3s-nas-user
-    #     password: 
-
-    # Create user and add to smbpasswd
+    - name: Add a {{ nas_user }}
+      become: yes
+      ansible.builtin.user:
+        name: "{{ nas_user }}"
+        password: $y$j9T$c2LILE8lQM8Sh.RwCeshK0$a3GNvRDCYgH1p3UDO7YnORdXR3gGdbJTGKdfvX9B/hA
+    - name: Add {{ nas_user }} to smbpasswd
+      become: yes
+      shell: "(echo {{ nas_user }}; echo {{ nas_user }}) | smbpasswd -s -a {{ nas_user }}"
