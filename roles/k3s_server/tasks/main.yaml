@@ -1,57 +1,54 @@
 ---
-- name: Configure Server/Master Nodes
-  hosts: master_nodes
-  tasks:
-    - name: Disable ufw
-      command: ufw disable
+- name: Disable ufw
+  command: ufw disable
+
+- name: Setup the server file
+  block:
+    - name: Make rancher config dir
+      file:
+        path: "/etc/rancher/k3s"
+        mode: 0755
+        state: directory
+    - name: Creating k3s config file
+      copy:
+        dest: "/etc/rancher/k3s/config.yaml"
+        mode: 0644
+        content: |
+          flannel-backend: none
+          cluster-init: true
+          cluster-cidr: 10.100.0.0/24
+          service-cidr: 10.100.2.0/24
+          cluster-dns: 10.100.2.10
+          disable:
+            - servicelb
+            - traefik
+
+- name: Get k3s installed version
+  ansible.builtin.command: k3s --version
+  register: k3s_version_output
+  changed_when: false
+  ignore_errors: true
+
+- name: Set k3s installed version
+  when: k3s_version_output.rc == 0
+  ansible.builtin.set_fact:
+    installed_k3s_version: "{{ k3s_version_output.stdout_lines[0].split(' ')[2] }}"
+
+- name: Install k3s server
+  when: k3s_version_output.rc != 0
+  become: yes
+  shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s
+
+- name: Add K3s autocomplete to user bashrc
+  ansible.builtin.lineinfile:
+    path: "~{{ ansible_user }}/.bashrc"
+    regexp: '\.\s+<\(k3s completion bash\)'
+    line: ". <(k3s completion bash)  # Added by k3s-ansible"
     
-    - name: Setup the server file
-      block:
-        - name: Make rancher config dir
-          file:
-            path: "/etc/rancher/k3s"
-            mode: 0755
-            state: directory
-        - name: Creating k3s config file
-          copy:
-            dest: "/etc/rancher/k3s/config.yaml"
-            mode: 0644
-            content: |
-              flannel-backend: none
-              cluster-init: true
-              cluster-cidr: 10.100.0.0/24
-              service-cidr: 10.100.2.0/24
-              cluster-dns: 10.100.2.10
-              disable:
-                - servicelb
-                - traefik
-
-    - name: Get k3s installed version
-      ansible.builtin.command: k3s --version
-      register: k3s_version_output
-      changed_when: false
-      ignore_errors: true
-
-    - name: Set k3s installed version
-      when: k3s_version_output.rc == 0
-      ansible.builtin.set_fact:
-        installed_k3s_version: "{{ k3s_version_output.stdout_lines[0].split(' ')[2] }}"
-
-    - name: Install k3s server
-      when: k3s_version_output.rc != 0
-      become: yes
-      shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s
-
-    - name: Add K3s autocomplete to user bashrc
-      ansible.builtin.lineinfile:
-        path: "~{{ ansible_user }}/.bashrc"
-        regexp: '\.\s+<\(k3s completion bash\)'
-        line: ". <(k3s completion bash)  # Added by k3s-ansible"
-        
-    - name: Copy K3S kubeconfig to control node
-      ansible.builtin.fetch:
-        src: /etc/rancher/k3s/k3s.yaml
-        dest: "{{ kubeconfig }}"
-        flat: true
+- name: Copy K3S kubeconfig to control node
+  ansible.builtin.fetch:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: "{{ kubeconfig }}"
+    flat: true
 
 

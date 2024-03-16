@@ -35,9 +35,9 @@
   tags: 
     - k3s
 
-# - name: Setup K3S Server
-#   hosts: master_nodes
-#   gather_facts: true
-#   become: true
-#   roles:
-#     - k3s_server
+- name: Setup K3S Server
+  hosts: master_nodes
+  gather_facts: true
+  become: true
+  roles:
+    - k3s_server
