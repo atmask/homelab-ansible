@@ -1,0 +1,16 @@
+---
+- name: Configure Bash Profile
+  copy:
+    dest: "~/.bash_profile"
+    content: |
+      set -o vi
+      temp() { echo $(cat /sys/class/thermal/thermal_zone0/temp)/1000 | bc -l; }
+    
+- name: install packages
+  apt:
+    pkg:
+      - tmux
+      - iproute2
+      - tcpdump
+      - iptables
+    update_cache: yes

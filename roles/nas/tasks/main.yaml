@@ -1,0 +1,38 @@
+---
+# Guide: https://www.raspberrypi.com/tutorials/nas-box-raspberry-pi-tutorial/
+
+- name: Installing Samba
+  ansible.builtin.apt:
+    pkg:
+      - samba
+      - samba-common-bin
+
+- name: Creating /nas/ dir for share
+  file:
+    path: "/nas"
+    state: directory
+
+- name: Creating Samba config file
+  copy:
+    dest: "/etc/samba/smb.conf"
+    content: |
+      [nas]
+      path=/nas
+      writeable=Yes
+      create mask=0777
+      directory mask=0777
+      public=no
+
+- name: Restart smb service
+  ansible.builtin.systemd_service:
+    name: smbd
+    state: restarted
+    daemon_reload: true
+
+- name: Add a {{ nas_user }}
+  ansible.builtin.user:
+    name: "{{ nas_user }}"
+    password: $y$j9T$c2LILE8lQM8Sh.RwCeshK0$a3GNvRDCYgH1p3UDO7YnORdXR3gGdbJTGKdfvX9B/hA
+    
+- name: Add {{ nas_user }} to smbpasswd
+  shell: "(echo {{ nas_user }}; echo {{ nas_user }}) | smbpasswd -s -a {{ nas_user }}"

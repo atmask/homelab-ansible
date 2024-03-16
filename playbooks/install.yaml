@@ -4,14 +4,16 @@
   gather_facts: true
   become: true
   roles:
-    - prep
+    - linux_node
+  tags:
+    - linuxEnv
 
-- name: Setup Tailscale Connection
-  hosts: skybreaker
-  gather_facts: true
-  become: true
-  roles:
-    - tailscale
+# - name: Setup Tailscale Connection
+#   hosts: skybreaker
+#   gather_facts: true
+#   become: true
+#   roles:
+#     - tailscale
 
 - name: Setup SMB Share
   hosts: bondsmith
@@ -19,10 +21,23 @@
   become: true
   roles:
     - nas
+  vars:
+    nas_user: k3s-nas-user
+  tags: 
+    - smb
 
-- name: Setup K3S Server
+- name: Confiure the K3S Nodes
   hosts: master_nodes
   gather_facts: true
   become: true
   roles:
-    - k3s_server
+    - k3s_prereq
+  tags: 
+    - k3s
+
+# - name: Setup K3S Server
+#   hosts: master_nodes
+#   gather_facts: true
+#   become: true
+#   roles:
+#     - k3s_server
