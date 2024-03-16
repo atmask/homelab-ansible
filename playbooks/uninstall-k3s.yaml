@@ -1,0 +1,15 @@
+---
+
+- name: Teardown master nodes
+  hosts: master_nodes
+  become: true
+  tasks:
+    - name: Run uninstall script
+      command: /usr/local/bin/k3s-uninstall.sh
+
+- name: Teardown worker nodes
+  hosts: worker_nodes
+  become: true
+  tasks:
+    - name: Run uninstall script
+      command: /usr/local/bin/k3s-agent-uninstall.sh
