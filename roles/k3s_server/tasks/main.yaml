@@ -16,9 +16,10 @@
         content: |
           flannel-backend: none
           cluster-init: true
-          cluster-cidr: 10.100.0.0/24
-          service-cidr: 10.100.2.0/24
-          cluster-dns: 10.100.2.10
+          disable-network-policy: true
+          cluster-cidr: 10.0.0.0/24
+          service-cidr: 10.0.2.0/24
+          cluster-dns: 10.0.2.10
           disable:
             - servicelb
             - traefik
