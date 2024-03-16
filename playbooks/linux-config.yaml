@@ -12,5 +12,7 @@
       apt:
         pkg:
           - tmux
+          - iproute2
+          - tcpdump
+          - iptables
         update_cache: yes
-    # - name: add ssh keys

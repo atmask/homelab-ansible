@@ -1,0 +1,48 @@
+---
+# Install k3s server (master) node to cluster
+# Disable 
+# - the flannel CNI (I prefer to use Calico) 
+# - the Traefik installation (I will install nginx ingress)
+# - serviceLB (I will configure metalLB)
+# - metrics server?
+# confgiurations /etc/rancher/k3s/config.yaml
+- name: Configure Server/Master Node
+  hosts: bondsmith
+  tasks:
+    - name: Disable ufw
+      command: ufw disable
+      become: yes
+    - name: Make rancher config dir
+      become: yes
+      file:
+        path: "/etc/rancher/k3s"
+        state: directory
+        
+    - name: Creating k3s config file
+      become: yes
+      copy:
+        dest: "/etc/rancher/k3s/config.yaml"
+        content: |
+          flannel-backend: none
+          cluster-init: true
+          cluster-cidr: 10.100.0.0/24
+          service-cidr: 10.100.2.0/24
+          cluster-dns: 10.100.2.10
+
+    - name: Get k3s installed version
+      ansible.builtin.command: k3s --version
+      register: k3s_version_output
+      changed_when: false
+      ignore_errors: true
+
+    - name: Set k3s installed version
+      when: k3s_version_output.rc == 0
+      ansible.builtin.set_fact:
+        installed_k3s_version: "{{ k3s_version_output.stdout_lines[0].split(' ')[2] }}"
+
+    - name: Install k3s server
+      when: k3s_version_output.rc != 0
+      become: yes
+      shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s - --flannel-backend none --token 12345
+      - name: Copy kubeconfig to control node
+

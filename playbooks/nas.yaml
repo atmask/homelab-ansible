@@ -1,3 +1,5 @@
+---
+# Guide: https://www.raspberrypi.com/tutorials/nas-box-raspberry-pi-tutorial/
 - name: Configure Samba
   hosts: bondsmith
   vars:
