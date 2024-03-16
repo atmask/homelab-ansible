@@ -1,5 +1,6 @@
 # Homelab Ansible
-Ansible playbooks for setting up my RPi homelab with k3s and Tailscale
+
+Ansible playbooks for setting up my RPi homelab with k3s and Tailscale. I borrow liberally from the [k3s/k3s-ansible](https://github.com/k3s-io/k3s-ansible) repo for configuring my k3s cluster with ansible. The purpose of creating this repo is to maintain things outside of k3s and to get familiar with writing ansible on my own.
 
 
 # Helpful CLI Flags

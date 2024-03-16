@@ -41,3 +41,5 @@
   become: true
   roles:
     - k3s_server
+  tags:
+    - k3s

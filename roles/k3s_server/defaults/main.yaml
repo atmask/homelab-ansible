@@ -1,3 +1,5 @@
 ---
 k3s_version: v1.28.7+k3s1
 kubeconfig: ~/.kube/config
+api_port: 6443 # port of the apiserver
+user_kubectl: true
