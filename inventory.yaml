@@ -3,7 +3,7 @@ master_nodes:
     bondsmith: 
       ansible_host: 10.100.0.102
       ansible_user: pi
-  
+
 worker_nodes:
   hosts:
     windrunner:
@@ -22,7 +22,6 @@ k3s_cluster:
     worker_nodes:
   vars:
     ansible_user: pi
-    k3s_version: 
   
 homelab:
   children:

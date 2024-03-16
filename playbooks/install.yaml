@@ -1,0 +1,28 @@
+---
+- name: Configure Server Environments
+  hosts: homelab
+  gather_facts: true
+  become: true
+  roles:
+    - prep
+
+- name: Setup Tailscale Connection
+  hosts: skybreaker
+  gather_facts: true
+  become: true
+  roles:
+    - tailscale
+
+- name: Setup SMB Share
+  hosts: bondsmith
+  gather_facts: true
+  become: true
+  roles:
+    - nas
+
+- name: Setup K3S Server
+  hosts: master_nodes
+  gather_facts: true
+  become: true
+  roles:
+    - k3s_server
