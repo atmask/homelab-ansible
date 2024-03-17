@@ -7,10 +7,17 @@
       - samba
       - samba-common-bin
 
+- name: Add a {{ nas_user }}
+  ansible.builtin.user:
+    name: "{{ nas_user }}"
+    password: $y$j9T$c2LILE8lQM8Sh.RwCeshK0$a3GNvRDCYgH1p3UDO7YnORdXR3gGdbJTGKdfvX9B/hA
+
 - name: Creating /nas/ dir for share
   file:
     path: "/nas"
     state: directory
+    owner: "{{ nas_user }}"
+    group: "{{ nas_user }}"
 
 - name: Creating Samba config file
   copy:
@@ -28,11 +35,6 @@
     name: smbd
     state: restarted
     daemon_reload: true
-
-- name: Add a {{ nas_user }}
-  ansible.builtin.user:
-    name: "{{ nas_user }}"
-    password: $y$j9T$c2LILE8lQM8Sh.RwCeshK0$a3GNvRDCYgH1p3UDO7YnORdXR3gGdbJTGKdfvX9B/hA
-    
+   
 - name: Add {{ nas_user }} to smbpasswd
   shell: "(echo {{ nas_user }}; echo {{ nas_user }}) | smbpasswd -s -a {{ nas_user }}"
