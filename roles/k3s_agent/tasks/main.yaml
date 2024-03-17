@@ -1,0 +1,34 @@
+---
+- name: Disable ufw
+  command: ufw disable
+
+- name: Setup the server file
+  block:
+    - name: Make rancher config dir
+      file:
+        path: "/etc/rancher/k3s"
+        mode: 0755
+        state: directory
+    - name: Creating k3s config file
+      copy:
+        dest: "/etc/rancher/k3s/config.yaml"
+        mode: 0644
+        content: |
+          server: https://{{ api_endpoint }}:{{ api_port }}
+  notify: Restart K3S Service
+
+- name: Get k3s installed version
+  ansible.builtin.command: k3s --version
+  register: k3s_version_output
+  changed_when: false
+  ignore_errors: true
+
+- name: Set k3s installed version
+  when: k3s_version_output.rc == 0
+  ansible.builtin.set_fact:
+    installed_k3s_version: "{{ k3s_version_output.stdout_lines[0].split(' ')[2] }}"
+
+- name: Install k3s server
+  when: k3s_version_output.rc != 0
+  become: yes
+  shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="agent" INSTALL_K3S_VERSION="{{ k3s_version }}" K3S_TOKEN=""{{ k3s_server_token }}"" sh -s 

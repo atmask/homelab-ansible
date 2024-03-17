@@ -23,6 +23,7 @@
           disable:
             - servicelb
             - traefik
+  notify: Restart K3S Service 
 
 - name: Get k3s installed version
   ansible.builtin.command: k3s --version
