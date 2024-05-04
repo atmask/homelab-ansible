@@ -1,0 +1,5 @@
+- name: Install pi-hole
+  hosts: skybreaker
+  tasks:
+    - name: Install pi-hole
+      shell: "curl -sSL https://install.pi-hole.net | bash"

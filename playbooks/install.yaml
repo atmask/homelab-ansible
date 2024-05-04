@@ -15,6 +15,16 @@
 #   roles:
 #     - tailscale
 
+## Not ready this require a file to allow unattended install
+# - name: Setup Pi-Hole
+#   hosts: skybreaker
+#   gather_facts: true
+#   become: true
+#   roles:
+#     - pi-hole
+#   tags:
+#     - dns
+
 - name: Setup SMB Share
   hosts: bondsmith
   gather_facts: true
