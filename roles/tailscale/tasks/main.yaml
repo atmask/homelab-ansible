@@ -1,24 +1,23 @@
-# Needs  testing but is low priorit for me right now
-# - name: Install Tailscale
-#   hosts: skybreaker
-#   tasks:
-#     - name: Install tailscale
-#       shell: "curl -fsSL https://tailscale.com/install.sh | sh"
-#     - name: Enable IPv4 and IPv6 IP forwarding
-#       become: yes
-#       shell: |
-#         echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
-#         echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
-#         sysctl -p /etc/sysctl.d/99-tailscale.conf
-#         firewall-cmd --permanent --add-masquerade
-#     - name: Optimize exit node
-#       become: yes
-#       shell: |
-#         NETDEV=$(ip route show 0/0 | cut -f5 -d' ')
-#         ethtool -K $NETDEV rx-udp-gro-forwarding on rx-gro-list off
-#         printf '#!/bin/sh\n\nethtool -K %s rx-udp-gro-forwarding on rx-gro-list off \n' "$(ip route show 0/0 | cut -f5 -d" ")" | sudo tee /etc/networkd-dispatcher/routable.d/50-tailscale
-#         chmod 755 /etc/networkd-dispatcher/routable.d/50-tailscale
-#         /etc/networkd-dispatcher/routable.d/50-tailscale
-#     - name: Activate tailscale
-#       become: yes
-#       shell: "tailscale up --advertise-exit-node --advertise-routes=192.168.0.0/18,10.100.0.0/18 --accept-dns=false"
+---
+# Needs Testing but is low priorit for me right now
+- name: Install tailscale
+  shell: "curl -fsSL https://tailscale.com/install.sh | sh"
+- name: Enable IPv4 and IPv6 IP forwarding
+  become: yes
+  shell: |
+    echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
+    echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
+    sysctl -p /etc/sysctl.d/99-tailscale.conf
+    # My system uses ufw
+    # firewall-cmd --permanent --add-masquerade
+- name: Optimize exit node
+  become: yes
+  shell: |
+    NETDEV=$(ip route show 0/0 | cut -f5 -d' ')
+    ethtool -K $NETDEV rx-udp-gro-forwarding on rx-gro-list off
+    printf '#!/bin/sh\n\nethtool -K %s rx-udp-gro-forwarding on rx-gro-list off \n' "$(ip route show 0/0 | cut -f5 -d" ")" | sudo tee /etc/networkd-dispatcher/routable.d/50-tailscale
+    chmod 755 /etc/networkd-dispatcher/routable.d/50-tailscale
+    /etc/networkd-dispatcher/routable.d/50-tailscale
+- name: Activate tailscale
+  become: yes
+  shell: "tailscale up --advertise-exit-node --advertise-routes=192.168.0.0/18,10.100.0.0/18 --accept-dns=false"

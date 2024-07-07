@@ -9,10 +9,12 @@
     - linuxEnv
 
 # - name: Setup Tailscale Connection
-#   hosts: skybreaker
+#   hosts: stoneward
 #   gather_facts: true
 #   become: true
 #   roles:
+#     - tailscale
+#   tags:
 #     - tailscale
 
 ## Not ready this require a file to allow unattended install

@@ -17,8 +17,8 @@ worker_nodes:
 
 other_nodes:
   hosts:
-    skybreaker: 
-      ansible_host: 10.100.0.103
+    stoneward: 
+      ansible_host: 10.100.0.106
       ansible_user: pi
 
 k3s_cluster:
