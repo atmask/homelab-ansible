@@ -3,6 +3,12 @@ master_nodes:
     bondsmith: 
       ansible_host: 10.100.0.102
       ansible_user: pi
+    storm_father:
+      ansible_host: 10.100.0.108
+      ansible_user: proxmox
+    the_tower:
+      ansible_host: 10.100.0.104
+      ansible_user: proxmox
     # Add additional control plane nodes here when needed
     # Example:
     # edgedancer:
