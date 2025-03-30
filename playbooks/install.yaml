@@ -38,7 +38,7 @@
   tags: 
     - smb
 
-- name: Confiure the K3S Nodes
+- name: Configure the K3S Nodes
   hosts: k3s_cluster
   gather_facts: true
   become: true
@@ -49,8 +49,8 @@
     - k3s_server
     - k3s_agent
 
-- name: Setup K3S Server
-  hosts: master_nodes
+- name: Setup First K3S Server Node
+  hosts: "{{ groups['master_nodes'][0] }}"
   gather_facts: true
   become: true
   roles:
@@ -59,8 +59,8 @@
     - k3s
     - k3s_server
 
-- name: Fetch the cluster token
-  hosts: bondsmith
+- name: Fetch the cluster token from first server node
+  hosts: "{{ groups['master_nodes'][0] }}"
   become: true
   tasks:
       - name: Fetch the server token
@@ -71,8 +71,22 @@
         ansible.builtin.set_fact:
           k3s_server_token: "{{ token.stdout }}"
   tags:
+    - k3s_server
     - k3s_agent
     - k3s
+
+- name: Setup Additional K3S Server Nodes
+  hosts: "master_nodes:!{{ groups['master_nodes'][0] }}"
+  gather_facts: true
+  become: true
+  vars:
+    k3s_server_token: "{{ hostvars[groups['master_nodes'][0]]['k3s_server_token'] }}"
+    first_master_host: "{{ hostvars[groups['master_nodes'][0]]['ansible_host'] }}"
+  roles:
+    - k3s_additional_server
+  tags:
+    - k3s
+    - k3s_server
 
 - name: Setup K3S Agents
   hosts: worker_nodes
@@ -84,5 +98,5 @@
     - k3s
     - k3s_agent
   vars:
-    k3s_server_token: "{{ hostvars['bondsmith']['k3s_server_token'] }}"
-    api_endpoint: "{{ hostvars['bondsmith']['ansible_host'] }}"
+    k3s_server_token: "{{ hostvars[groups['master_nodes'][0]]['k3s_server_token'] }}"
+    api_endpoint: "{{ hostvars[groups['master_nodes'][0]]['ansible_host'] }}"

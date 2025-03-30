@@ -3,8 +3,13 @@ master_nodes:
     bondsmith: 
       ansible_host: 10.100.0.102
       ansible_user: pi
+    # Add additional control plane nodes here when needed
+    # Example:
+    # edgedancer:
+    #   ansible_host: 10.100.0.103
+    #   ansible_user: pi
   vars:
-    api_endpoint: "{{ hostvars['bondsmith']['ansible_host'] }}"
+    api_endpoint: "{{ hostvars[groups['master_nodes'][0]]['ansible_host'] }}"
 
 worker_nodes:
   hosts:
