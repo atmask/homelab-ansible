@@ -57,12 +57,23 @@ The hosts can be pinged by running:
 To add additional K3s control plane nodes:
 
 1. Add the new node to the `master_nodes` section in the inventory.yaml file
-2. Run only the additional server role with:
-   `ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit 'master_nodes:!{{ groups["master_nodes"][0] }}'`
+2. Run only the additional server role with one of these approaches:
 
-This will apply the k3s_additional_server role to all master nodes except the first one.
+   Option A: Directly specify the additional node name(s):
+   ```
+   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit your-new-node-name
+   ```
 
-To target a specific additional control plane node:
-   `ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit "your-new-node-name"`
+   Option B: Exclude the first node explicitly by name (assuming your first node is named "bondsmith"):
+   ```
+   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit "master_nodes:!bondsmith"
+   ```
+
+   Option C: Create a temporary group in your inventory file for additional master nodes, then:
+   ```
+   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit additional_masters
+   ```
+
+These commands will apply the k3s_additional_server role to your additional control plane nodes.
 
 
