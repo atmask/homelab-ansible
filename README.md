@@ -30,7 +30,7 @@ To add additional K3s control plane nodes:
 
 1. Add the new node to the `master_nodes` section in the inventory.yaml file
 2. Run only the additional server role with:
-   `ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit "master_nodes:!{{ groups['master_nodes'][0] }}"`
+   `ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit 'master_nodes:!{{ groups["master_nodes"][0] }}'`
 
 This will apply the k3s_additional_server role to all master nodes except the first one.
 
