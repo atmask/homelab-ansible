@@ -61,17 +61,17 @@ To add additional K3s control plane nodes:
 
    Option A: Directly specify the additional node name(s) exactly as they appear in your inventory:
    ```
-   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit storm_father
+   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server -K --limit storm_father
    ```
    
    Or to target multiple additional nodes:
    ```
-   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit 'storm_father,the_tower'
+   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server -K --limit 'storm_father,the_tower'
    ```
 
    Option B: Exclude the first node explicitly:
    ```
-   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit 'master_nodes:!bondsmith'
+   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server -K --limit 'master_nodes:!bondsmith'
    ```
 
    Option C: Create a separate group in your inventory.yaml file for additional master nodes:
@@ -85,7 +85,7 @@ To add additional K3s control plane nodes:
    
    Then target that group:
    ```
-   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server --limit additional_masters
+   ansible-playbook -i inventory.yaml playbooks/install.yaml --tags k3s_server -K --limit additional_masters
    ```
 
 These commands will apply the k3s_additional_server role to your additional control plane nodes.
