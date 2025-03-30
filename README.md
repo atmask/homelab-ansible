@@ -8,6 +8,35 @@ Ansible playbooks for setting up my RPi homelab with k3s and Tailscale. I borrow
 - -K: requests the "become" password before executing
 - -u <user>: Specify the user to use when executing the commands
 
+## Prerequisites
+
+### Install Ansible
+### Install Ansible
+
+- On macOS:
+  ```
+  brew install ansible
+  ```
+
+- On Ubuntu/Debian:
+  ```
+  apt-get install ansible
+  ```
+
+
+### Install sshpass
+To use SSH password authentication with Ansible (the `-k` flag), you need to install `sshpass`:
+
+- On macOS:
+  ```
+  brew install sshpass
+  ```
+
+- On Ubuntu/Debian:
+  ```
+  apt-get install sshpass
+  ```
+
 
 ## Validating the inventory
 
