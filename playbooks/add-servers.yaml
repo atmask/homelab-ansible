@@ -1,0 +1,41 @@
+---
+
+- name: Configure the K3S Nodes
+  hosts: "the_tower,storm_father"
+  gather_facts: true
+  become: true
+  roles:
+    - k3s_prereq
+  tags: 
+    - k3s
+    - k3s_server
+    - k3s_agent
+
+- name: Fetch the cluster token from first server node
+  hosts: "{{ groups['master_nodes'][0] }}"
+  become: true
+  tasks:
+      - name: Fetch the server token
+        command: "cat /var/lib/rancher/k3s/server/token"
+        register: token
+        changed_when: false
+      - name: Set the token fact
+        ansible.builtin.set_fact:
+          k3s_server_token: "{{ token.stdout }}"
+  tags:
+    - k3s_server
+    - k3s_agent
+    - k3s
+
+- name: Setup Additional K3S Server Nodes
+  hosts: "the_tower,storm_father"
+  gather_facts: true
+  become: true
+  vars:
+    k3s_server_token: "{{ hostvars[groups['master_nodes'][0]]['k3s_server_token'] }}"
+    first_master_host: "{{ hostvars[groups['master_nodes'][0]]['ansible_host'] }}"
+  roles:
+    - k3s_additional_server
+  tags:
+    - k3s
+    - k3s_server
