@@ -11,7 +11,6 @@ Ansible playbooks for setting up my RPi homelab with k3s and Tailscale. I borrow
 ## Prerequisites
 
 ### Install Ansible
-### Install Ansible
 
 - On macOS:
   ```
